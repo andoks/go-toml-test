@@ -1,0 +1,21 @@
+[general]
+    node_name = "localhost"
+    location = "nort-west-eu"
+[sensors]
+    [sensors.sensor1]
+        name = "sensorOne"
+        [sensors.sensor1.channel.one]
+            address = 42 
+            sample_freq = 50
+        [sensors.sensor1.channel.two]
+            address = 1337
+            sample_freq = 50
+
+    [sensors.sensor2]
+        name = "sensorTwo"
+        [sensors.sensor2.channel.one]
+            address = 12
+            sample_freq = 50
+        [sensors.sensor2.channel.two]
+            address = 7
+            sample_freq = 50
