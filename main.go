@@ -16,7 +16,44 @@ func check(err error) {
 	}
 }
 
-type config struct {
+type arrayConfig struct {
+	Location            string
+	LogLevel            string `toml:"log_level"`
+	TagDataWithHostname bool   `toml:"tag_data_with_hostname"`
+	Sensors             []struct {
+		Name     string
+		UUID     string
+		Channels []struct {
+			Name       string
+			Address    int64
+			SampleFreq int64 `toml:"sample_freq"`
+		}
+	}
+}
+
+var _ fmt.Stringer = arrayConfig{}
+
+func (c arrayConfig) String() string {
+	var buf bytes.Buffer
+
+	fmt.Fprintf(&buf, "location                 : %v\n", c.Location)
+	fmt.Fprintf(&buf, "log-level                : %v\n", c.LogLevel)
+	fmt.Fprintf(&buf, "tag data with hostname   : %v\n", c.TagDataWithHostname)
+
+	fmt.Fprint(&buf, "Sensors:\n")
+	for _, sensor := range c.Sensors {
+		fmt.Fprintf(&buf, "   sensor \"%v\" (UUID: \"%v\")\n", sensor.Name, sensor.UUID)
+		for _, channel := range sensor.Channels {
+			fmt.Fprintf(&buf, "       channel \"%v\"\n", channel.Name)
+			fmt.Fprintf(&buf, "           address     : %v\n", channel.Address)
+			fmt.Fprintf(&buf, "           sample_freq : %v\n", channel.SampleFreq)
+		}
+	}
+
+	return buf.String()
+}
+
+type subtableConfig struct {
 	Location            string
 	LogLevel            string `toml:"log_level"`
 	TagDataWithHostname bool   `toml:"tag_data_with_hostname"`
@@ -29,9 +66,9 @@ type config struct {
 	}
 }
 
-var _ fmt.Stringer = config{}
+var _ fmt.Stringer = subtableConfig{}
 
-func (c config) String() string {
+func (c subtableConfig) String() string {
 	var buf bytes.Buffer
 
 	fmt.Fprintf(&buf, "location                 : %v\n", c.Location)
@@ -51,8 +88,8 @@ func (c config) String() string {
 	return buf.String()
 }
 
-func main() {
-	tomlFile, err := os.Open("test.toml")
+func testTomlParse(filename string, objectToParseInto interface{}) {
+	tomlFile, err := os.Open(filename)
 	check(err)
 	defer tomlFile.Close()
 
@@ -76,9 +113,17 @@ func main() {
 	_, err = tomlFile.Seek(0, 0)
 	check(err)
 
-	var value config
-	_, err = toml.DecodeReader(tomlFile, &value)
+	_, err = toml.DecodeReader(tomlFile, objectToParseInto)
 	check(err)
 
-	fmt.Printf("toml-struct type:\n----\n%T\n----\ncontent:\n----\n%+v\n----\n", value, value)
+	objAsStringer := objectToParseInto.(fmt.Stringer)
+	fmt.Printf("toml-struct type:\n----\n%T\n----\nstruct content:\n----\n%+v\n----\n", objectToParseInto, objAsStringer)
+}
+
+func main() {
+	arrConf := arrayConfig{}
+	testTomlParse("test-array-of-tables.toml", &arrConf)
+
+	subtabConf := subtableConfig{}
+	testTomlParse("test-subtables.toml", &subtabConf)
 }

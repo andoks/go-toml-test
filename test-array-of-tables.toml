@@ -1,0 +1,27 @@
+location = "nort-west-eu"
+log_level = "warning"
+tag_data_with_hostname = true
+    
+[[sensors]]
+    name = "sensor 1"
+    uuid = "ab865058-3c2a-40d7-812d-a8c724b7fc1b"
+    [[sensors.channels]]
+        name = "one"
+        address = 42
+        sample_freq = 50
+    [[sensors.channels]]
+        name = "two"
+        address = 1337
+        sample_freq = 50
+
+[[sensors]]
+    name = "sensor 2"
+    uuid = "115fdf65-f46a-4954-a4a7-ba407b23d2b5"
+    [[sensors.channels]]
+        name = "one"
+        address = 12
+        sample_freq = 50
+    [[sensors.channels]]
+        name = "two"
+        address = 7
+        sample_freq = 50
