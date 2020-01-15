@@ -1,21 +1,24 @@
-[general]
-    node_name = "localhost"
-    location = "nort-west-eu"
+location = "nort-west-eu"
+log_level = "warning"
+tag_data_with_hostname = true
+    
 [sensors]
     [sensors.sensor1]
-        name = "sensorOne"
-        [sensors.sensor1.channel.one]
-            address = 42 
-            sample_freq = 50
-        [sensors.sensor1.channel.two]
-            address = 1337
-            sample_freq = 50
+        uuid = "ab865058-3c2a-40d7-812d-a8c724b7fc1b"
+        [sensors.sensor1.channels]
+            [sensors.sensor1.channels.one]
+                address = 42 
+                sample_freq = 50
+            [sensors.sensor1.channels.two]
+                address = 1337
+                sample_freq = 50
 
     [sensors.sensor2]
-        name = "sensorTwo"
-        [sensors.sensor2.channel.one]
-            address = 12
-            sample_freq = 50
-        [sensors.sensor2.channel.two]
-            address = 7
-            sample_freq = 50
+        uuid = "115fdf65-f46a-4954-a4a7-ba407b23d2b5"
+        [sensors.sensor2.channels]
+            [sensors.sensor2.channels.one]
+                address = 12
+                sample_freq = 50
+            [sensors.sensor2.channels.two]
+                address = 7
+                sample_freq = 50

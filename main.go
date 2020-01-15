@@ -17,13 +17,12 @@ func check(err error) {
 }
 
 type config struct {
-	General struct {
-		NodeName string `toml:"node_name"`
-		Location string
-	}
-	Sensors map[string]struct {
-		Name    string
-		Channel map[string]struct {
+	Location            string
+	LogLevel            string `toml:"log_level"`
+	TagDataWithHostname bool   `toml:"tag_data_with_hostname"`
+	Sensors             map[string]struct {
+		UUID     string
+		Channels map[string]struct {
 			Address    int64
 			SampleFreq int64 `toml:"sample_freq"`
 		}
@@ -35,13 +34,14 @@ var _ fmt.Stringer = config{}
 func (c config) String() string {
 	var buf bytes.Buffer
 
-	fmt.Fprintf(&buf, "nodename: %v\n", c.General.NodeName)
-	fmt.Fprintf(&buf, "location: %v\n", c.General.Location)
+	fmt.Fprintf(&buf, "location                 : %v\n", c.Location)
+	fmt.Fprintf(&buf, "log-level                : %v\n", c.LogLevel)
+	fmt.Fprintf(&buf, "tag data with hostname   : %v\n", c.TagDataWithHostname)
 
-	fmt.Fprint(&buf, "Sensors:")
+	fmt.Fprint(&buf, "Sensors:\n")
 	for name, sensor := range c.Sensors {
-		fmt.Fprintf(&buf, "   sensor \"%v\" (key: %v)\n", sensor.Name, name)
-		for chanName, channel := range sensor.Channel {
+		fmt.Fprintf(&buf, "   sensor \"%v\" (key: %v)\n", sensor.UUID, name)
+		for chanName, channel := range sensor.Channels {
 			fmt.Fprintf(&buf, "       channel \"%v\"\n", chanName)
 			fmt.Fprintf(&buf, "           address     : %v\n", channel.Address)
 			fmt.Fprintf(&buf, "           sample_freq : %v\n", channel.SampleFreq)
